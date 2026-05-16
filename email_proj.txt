@@ -1,0 +1,192 @@
+﻿public class StudentController {
+
+
+    // Input Variables
+    public String studentName {get; set;}
+    public Integer rollNo {get; set;}
+    public String email {get; set;}
+    public Decimal marks {get; set;}
+
+
+    // Message
+    public String msg {get; set;}
+
+
+    // Student List
+    public List<Student__c> studentList {get; set;}
+
+
+    // Save Student
+    public void saveStudent() {
+
+
+        try {
+
+
+            Student__c s = new Student__c();
+
+
+            s.Name = studentName;
+            s.Roll_Number__c = rollNo;
+            s.Email__c = email;
+            s.Marks__c = marks;
+
+
+            insert s;
+
+
+            msg = 'Student Record Saved Successfully';
+
+
+            loadStudents();
+
+
+            // Clear fields
+            studentName = '';
+            rollNo = null;
+            email = '';
+            marks = null;
+
+
+        }
+
+
+        catch(Exception e) {
+
+
+            msg = e.getMessage();
+        }
+    }
+
+
+    // Load All Students
+    public void loadStudents() {
+
+
+        studentList = [
+            SELECT Id,
+                   Name,
+                   Roll_Number__c,
+                   Email__c,
+                   Marks__c
+            FROM Student__c
+        ];
+    }
+
+
+    // Constructor
+    public StudentController() {
+
+
+        loadStudents();
+    }
+}
+___________________________________________________________
+
+
+<apex:page controller="StudentController">
+
+
+    <apex:form>
+
+
+        <apex:pageBlock title="Student Management System">
+
+
+            <apex:pageMessages/>
+
+
+            <apex:pageBlockSection columns="2">
+
+
+                <apex:inputText
+                    value="{!studentName}"
+                    label="Student Name"
+                    required="true"/>
+
+
+                <apex:inputText
+                    value="{!rollNo}"
+                    label="Roll Number"/>
+
+
+                <apex:inputText
+                    value="{!email}"
+                    label="Email"/>
+
+
+                <apex:inputText
+                    value="{!marks}"
+                    label="Marks"/>
+
+
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockButtons>
+
+
+                <apex:commandButton
+                    value="Save Student"
+                    action="{!saveStudent}"
+                    rerender="table,msg"/>
+
+
+            </apex:pageBlockButtons>
+
+
+        </apex:pageBlock>
+
+
+        <!-- Message -->
+        <apex:outputPanel id="msg">
+
+
+            <apex:pageMessage
+                summary="{!msg}"
+                severity="info"
+                rendered="{!NOT(ISBLANK(msg))}"/>
+
+
+        </apex:outputPanel>
+
+
+        <!-- Student Table -->
+        <apex:pageBlock title="Student Records" id="table">
+
+
+            <apex:pageBlockTable
+                value="{!studentList}"
+                var="s">
+
+
+                <apex:column
+                    value="{!s.Name}"
+                    headerValue="Name"/>
+
+
+                <apex:column
+                    value="{!s.Roll_Number__c}"
+                    headerValue="Roll No"/>
+
+
+                <apex:column
+                    value="{!s.Email__c}"
+                    headerValue="Email"/>
+
+
+                <apex:column
+                    value="{!s.Marks__c}"
+                    headerValue="Marks"/>
+
+
+            </apex:pageBlockTable>
+
+
+        </apex:pageBlock>
+
+
+    </apex:form>
+
+
+</apex:page>
